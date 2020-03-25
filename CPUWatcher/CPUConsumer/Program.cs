@@ -9,7 +9,7 @@ namespace CPUConsumer
     {
         private static List<Thread> threads = new List<Thread>();
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             SetCPUConsume();
 
@@ -21,15 +21,16 @@ namespace CPUConsumer
                     t.Abort();
                 }
 
+                threads = new List<Thread>();
+
                 Console.WriteLine();
                 SetCPUConsume();
             }
-
         }
 
         private static void SetCPUConsume()
         {
-            int processorCount = Environment.ProcessorCount;
+            var processorCount = Environment.ProcessorCount;
             string input;
 
             Console.WriteLine("===============");
@@ -53,9 +54,14 @@ namespace CPUConsumer
             Console.WriteLine();
             Console.WriteLine("Consume {0} CPU, {1}% usage", cpuCount, cpuUsage);
 
-            for (int i = 0; i < cpuCount; i++)
+            SetConsumer(cpuCount, cpuUsage);
+        }
+
+        private static void SetConsumer(int cpuCount, int cpuUsage)
+        {
+            for (var i = 0; i < cpuCount; i++)
             {
-                Thread t = new Thread(new ParameterizedThreadStart(ConsumeCPU));
+                var t = new Thread(new ParameterizedThreadStart(ConsumeCPU));
                 t.IsBackground = true;
                 t.Start(cpuUsage);
                 threads.Add(t);
@@ -64,13 +70,24 @@ namespace CPUConsumer
 
         private static void ConsumeCPU(object cpuUsage)
         {
+            int percent;
+            try
+            {
+                percent = (int)cpuUsage;
+            }
+            catch (InvalidCastException)
+            {
+                return;
+            }
+
             Stopwatch watch = new Stopwatch();
             watch.Start();
+
             while (true)
             {
-                if (watch.ElapsedMilliseconds > (int)cpuUsage)
+                if (watch.ElapsedMilliseconds > percent)
                 {
-                    Thread.Sleep(100 - (int)cpuUsage);
+                    Thread.Sleep(100 - percent);
                     watch.Reset();
                     watch.Start();
                 }
