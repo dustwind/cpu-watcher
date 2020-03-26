@@ -19,15 +19,15 @@ namespace CPUConsumer
         {
             var processorCount = Environment.ProcessorCount;
 
-            Console.WriteLine("===============");
-            Console.WriteLine("Set CPU Consume");
-            Console.WriteLine("Cpu available {0}", processorCount);
+            ConsoleInput.ShowLine("===============");
+            ConsoleInput.ShowLine("Set CPU Consume");
+            ConsoleInput.ShowLine($"Cpu available {processorCount}");
 
-            int cpuCount = ConsoleInput.GetInteger("Enter cpu count: ", processorCount);
-            int cpuUsage = ConsoleInput.GetInteger("Enter cpu usage: ", 100);
+            var cpuCount = ConsoleInput.GetInteger("Enter cpu count: ", processorCount);
+            var cpuUsage = ConsoleInput.GetInteger("Enter cpu usage: ", 100);
 
-            Console.WriteLine();
-            Console.WriteLine("Consume {0} CPU, {1}% usage", cpuCount, cpuUsage);
+            ConsoleInput.ShowLine();
+            ConsoleInput.ShowLine($"Consume {cpuCount} CPU, {cpuUsage}% usage");
 
             AddConsumer(cpuCount, cpuUsage);
 

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using Domain;
 
 namespace CPUWatcher
 {
     public class Watcher
     {
-        private CancellationTokenSource tokenSource = new CancellationTokenSource();
-        private List<ProcessCPUWatcher> watching = new List<ProcessCPUWatcher>();
+        private List<CPUWatcher> watching = new List<CPUWatcher>();
+
+        private System.Timers.Timer intervalWatcher;
 
         public void Start()
         {
@@ -17,26 +17,35 @@ namespace CPUWatcher
 
         private void SetWatcher()
         {
-            var token = tokenSource.Token;
+            ConsoleInput.ShowLine("===============");
+            ConsoleInput.ShowLine("Set watcher for processes");
 
-            Console.WriteLine("===============");
-            Console.WriteLine("Set watcher for processes");
+            var interval = ConsoleInput.GetInteger("Enter interval in sec: ");
+            var processes = ConsoleInput.GetString("Enter names separated by commas", ',');
 
-            int interval = ConsoleInput.GetInteger("Enter interval in sec: ");
-            List<string> processes = ConsoleInput.GetString("Enter names separated by commas", ',');
-
+            watching = new List<CPUWatcher>();
             foreach (var p in processes)
             {
-                watching.Add(new ProcessCPUWatcher(p, TimeSpan.FromSeconds(interval), token));
+                watching.Add(new CPUWatcher(p, ConsoleInput.ShowLine));
             }
+
+            intervalWatcher = new System.Timers.Timer(interval * 1000);
+            intervalWatcher.Elapsed += Timer_Elapsed;
+            intervalWatcher.Enabled = true;
 
             ConsoleInput.WaitKey("Press <E> to abort CPU watcher", ConsoleKey.E, AbortWatching);
         }
 
+        private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            TimerEventClass.RaiseElapseTimerEvent();
+        }
+
         private void AbortWatching()
         {
-            tokenSource.Cancel();
-            watching.Clear();
+            intervalWatcher.Dispose();
+            watching.ForEach(x => x.Dispose());
+            watching = null;
 
             SetWatcher();
         }

@@ -6,6 +6,11 @@ namespace Domain
 {
     public static class ConsoleInput
     {
+        public static void ShowLine(string text = "")
+        {
+            Console.WriteLine(text);
+        }
+
         public static int GetInteger(string text, int greaterCondition = int.MaxValue, int lessCondition = 0)
         {
             string input;
@@ -29,7 +34,8 @@ namespace Domain
             if (separator != null)
             {
                 return input.Split(separator.Value).Select(p => p.Trim().ToLower()).ToList();
-            } else
+            }
+            else
             {
                 return new List<string> { input };
             }
@@ -39,11 +45,12 @@ namespace Domain
         {
             Console.WriteLine(text);
 
-            while (Console.ReadKey().Key == key)
+            while (Console.ReadKey(true).Key != key)
             {
-                Console.WriteLine();
-                callback();
             }
+
+            Console.WriteLine();
+            callback();
         }
     }
 }

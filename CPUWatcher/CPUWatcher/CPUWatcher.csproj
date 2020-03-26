@@ -43,9 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ProcessCPUWatcher.cs" />
+    <Compile Include="CPUWatcher.cs" />
+    <Compile Include="ProcessWatcher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TimerEventClass.cs" />
     <Compile Include="Watcher.cs" />
   </ItemGroup>
   <ItemGroup>
