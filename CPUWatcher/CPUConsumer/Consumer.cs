@@ -31,7 +31,7 @@ namespace CPUConsumer
 
             AddConsumer(cpuCount, cpuUsage);
 
-            WaitAbort();
+            ConsoleInput.WaitKey("Press <E> to abort CPU consume", ConsoleKey.E, AbortConsume);
         }
 
         private void AddConsumer(int cpuCount, int cpuUsage)
@@ -72,21 +72,16 @@ namespace CPUConsumer
             }
         }
 
-        private void WaitAbort()
+        private void AbortConsume()
         {
-            Console.WriteLine("Press <E> to abort CPU consume");
-            while (Console.ReadKey().Key == ConsoleKey.E)
+            foreach (var t in threads)
             {
-                foreach (var t in threads)
-                {
-                    t.Abort();
-                }
-
-                threads = new List<Thread>();
-
-                Console.WriteLine();
-                SetCPUConsume();
+                t.Abort();
             }
+
+            threads = new List<Thread>();
+
+            SetCPUConsume();
         }
     }
 }

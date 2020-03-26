@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Domain
 {
@@ -17,6 +19,31 @@ namespace Domain
             while (!int.TryParse(input, out result) || (result > greaterCondition) || (result < lessCondition));
 
             return result;
+        }
+
+        public static List<string> GetString(string text, char? separator = null)
+        {
+            Console.WriteLine(text);
+
+            var input = Console.ReadLine();
+            if (separator != null)
+            {
+                return input.Split(separator.Value).Select(p => p.Trim().ToLower()).ToList();
+            } else
+            {
+                return new List<string> { input };
+            }
+        }
+
+        public static void WaitKey(string text, ConsoleKey key, Action callback)
+        {
+            Console.WriteLine(text);
+
+            while (Console.ReadKey().Key == key)
+            {
+                Console.WriteLine();
+                callback();
+            }
         }
     }
 }
