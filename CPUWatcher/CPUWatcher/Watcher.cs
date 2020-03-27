@@ -6,9 +6,9 @@ namespace CPUWatcher
 {
     public class Watcher
     {
-        private List<CPUWatcher> watching = new List<CPUWatcher>();
+        private List<ProcessWatcher> watchers = new List<ProcessWatcher>();
 
-        private System.Timers.Timer intervalWatcher;
+        private System.Timers.Timer watcherTimer;
 
         public void Start()
         {
@@ -23,29 +23,29 @@ namespace CPUWatcher
             var interval = ConsoleInput.GetInteger("Enter interval in sec: ");
             var processes = ConsoleInput.GetString("Enter names separated by commas", ',');
 
-            watching = new List<CPUWatcher>();
             foreach (var p in processes)
             {
-                watching.Add(new CPUWatcher(p, ConsoleInput.ShowLine));
+                watchers.Add(new ProcessWatcher(p, ConsoleInput.ShowLine));
             }
 
-            intervalWatcher = new System.Timers.Timer(interval * 1000);
-            intervalWatcher.Elapsed += Timer_Elapsed;
-            intervalWatcher.Enabled = true;
+            watcherTimer = new System.Timers.Timer(interval * 1000);
+            watcherTimer.Elapsed += WatcherTimer_Elapsed;
+            watcherTimer.Enabled = true;
 
-            ConsoleInput.WaitKey("Press <E> to abort CPU watcher", ConsoleKey.E, AbortWatching);
+            ConsoleInput.WaitKey("Press <E> to abort CPU watcher", ConsoleKey.E, AbortWatcher);
         }
 
-        private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void WatcherTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            TimerEventClass.RaiseElapseTimerEvent();
+            EventClass.RaiseElapseTimerEvent();
         }
 
-        private void AbortWatching()
+        private void AbortWatcher()
         {
-            intervalWatcher.Dispose();
-            watching.ForEach(x => x.Dispose());
-            watching = null;
+            watcherTimer.Dispose();
+
+            EventClass.RaiseDisposeEvent();
+            watchers = new List<ProcessWatcher>();
 
             SetWatcher();
         }

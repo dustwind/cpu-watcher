@@ -12,10 +12,10 @@ namespace CPUConsumer
 
         public void Start()
         {
-            SetCPUConsume();
+            SetConsume();
         }
 
-        private void SetCPUConsume()
+        private void SetConsume()
         {
             var processorCount = Environment.ProcessorCount;
 
@@ -29,12 +29,12 @@ namespace CPUConsumer
             ConsoleInput.ShowLine();
             ConsoleInput.ShowLine($"Consume {cpuCount} CPU, {cpuUsage}% usage");
 
-            AddConsumer(cpuCount, cpuUsage);
+            AddCPUConsumer(cpuCount, cpuUsage);
 
             ConsoleInput.WaitKey("Press <E> to abort CPU consume", ConsoleKey.E, AbortConsume);
         }
 
-        private void AddConsumer(int cpuCount, int cpuUsage)
+        private void AddCPUConsumer(int cpuCount, int cpuUsage)
         {
             for (var i = 0; i < cpuCount; i++)
             {
@@ -81,7 +81,7 @@ namespace CPUConsumer
 
             threads = new List<Thread>();
 
-            SetCPUConsume();
+            SetConsume();
         }
     }
 }
