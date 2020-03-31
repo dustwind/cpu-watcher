@@ -26,7 +26,7 @@ namespace Domain
             return result;
         }
 
-        public static List<string> GetString(string text, char? separator = null)
+        public static List<string> GetStringArray(string text, char? separator = null)
         {
             Console.WriteLine(text);
 

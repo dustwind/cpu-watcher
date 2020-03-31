@@ -15,15 +15,20 @@ namespace CPUWatcher
 
         public event CPUWatcherHandler ShowCPU;
 
-        public ProcessWatcher(string name, CPUWatcherHandler handler)
+        public ProcessWatcher(Watcher parent, string name, CPUWatcherHandler handler)
         {
             appName = name;
             ShowCPU += handler;
 
-            UpdateProcesses();
+            parent.OnElapseTimerEvent += (s, e) =>
+            {
+                RefreshProcesses(e);
+            };
 
-            EventClass.ElapseTimerEvent += EventClass_ElapseTimerEvent;
-            EventClass.DisposeEvent += EventClass_DisposeEvent;
+            parent.OnAbortWatcher += (s, e) =>
+            {
+                Dispose();
+            };
         }
 
         public void Dispose()
@@ -31,22 +36,12 @@ namespace CPUWatcher
             ShowCPU = null;
         }
 
-        private void EventClass_ElapseTimerEvent(object sender, EventArgs e)
-        {
-            UpdateProcesses();
-        }
-
-        private void EventClass_DisposeEvent(object sender, EventArgs e)
-        {
-            Dispose();
-        }
-
-        private void UpdateProcesses()
+        private void RefreshProcesses(List<Process> list)
         {
             var now = DateTime.UtcNow;
             var tempProcesses = new List<ProcessUnit>();
 
-            var listOfProcesses = Process.GetProcesses().Where(x => x.ProcessName.ToLower().Equals(appName)).ToList();
+            var listOfProcesses = list.Where(x => x.ProcessName.ToLower().Equals(appName)).ToList();
             foreach (var process in listOfProcesses)
             {
                 var p = processes.Find(x => x.ProcessId == process.Id);

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using Domain;
 
 namespace CPUWatcher
@@ -9,6 +11,12 @@ namespace CPUWatcher
         private List<ProcessWatcher> watchers = new List<ProcessWatcher>();
 
         private System.Timers.Timer watcherTimer;
+
+        private List<Process> ListOfProcesses = new List<Process>();
+
+        public event EventHandler<List<Process>> OnElapseTimerEvent;
+
+        public event EventHandler OnAbortWatcher;
 
         public void Start()
         {
@@ -21,30 +29,37 @@ namespace CPUWatcher
             ConsoleInput.ShowLine("Set watcher for processes");
 
             var interval = ConsoleInput.GetInteger("Enter interval in sec: ");
-            var processes = ConsoleInput.GetString("Enter names separated by commas", ',');
+            var processes = ConsoleInput.GetStringArray("Enter names separated by commas", ',');
 
             foreach (var p in processes)
             {
-                watchers.Add(new ProcessWatcher(p, ConsoleInput.ShowLine));
+                watchers.Add(new ProcessWatcher(this, p, ConsoleInput.ShowLine));
             }
 
+            RefreshProcesses();
+
             watcherTimer = new System.Timers.Timer(interval * 1000);
-            watcherTimer.Elapsed += WatcherTimer_Elapsed;
+            watcherTimer.Elapsed += (s, e) =>
+            {
+                RefreshProcesses();
+            };
             watcherTimer.Enabled = true;
 
             ConsoleInput.WaitKey("Press <E> to abort CPU watcher", ConsoleKey.E, AbortWatcher);
         }
 
-        private void WatcherTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void RefreshProcesses()
         {
-            EventClass.RaiseElapseTimerEvent();
+            ListOfProcesses = Process.GetProcesses().ToList();
+
+            OnElapseTimerEvent?.Invoke(typeof(Watcher), ListOfProcesses);
         }
 
         private void AbortWatcher()
         {
             watcherTimer.Dispose();
 
-            EventClass.RaiseDisposeEvent();
+            OnAbortWatcher?.Invoke(typeof(Watcher), EventArgs.Empty);
             watchers = new List<ProcessWatcher>();
 
             SetWatcher();
