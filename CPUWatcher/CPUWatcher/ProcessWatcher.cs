@@ -58,8 +58,7 @@ namespace CPUWatcher
                     var totalMsPassed = (endTime - p.StartTime).TotalMilliseconds;
                     var cpuUsageTotal = cpuUsedMs / (Environment.ProcessorCount * totalMsPassed);
 
-                    p.StartTime = endTime;
-                    p.StartCpuUsage = endCpuUsage;
+                    p.UpdateStartTimeAndUsage(endTime, endCpuUsage);
 
                     ShowCPU?.Invoke($"{p.ProcessId} {appName}: {Math.Round(cpuUsageTotal * 100, 2)}");
 

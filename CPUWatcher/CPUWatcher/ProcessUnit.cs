@@ -13,8 +13,14 @@ namespace CPUWatcher
 
         public int ProcessId { get; }
 
-        public DateTime StartTime { get; set; }
+        public DateTime StartTime { get; private set; }
 
-        public double StartCpuUsage { get; set; }
+        public double StartCpuUsage { get; private set; }
+
+        public void UpdateStartTimeAndUsage(DateTime startTime, double usage)
+        {
+            StartTime = startTime;
+            StartCpuUsage = usage;
+        }
     }
 }
