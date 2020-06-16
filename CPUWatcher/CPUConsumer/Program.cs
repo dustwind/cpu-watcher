@@ -1,11 +1,12 @@
-﻿namespace CPUConsumer
+﻿using Domain.GUI;
+
+namespace CPUConsumer
 {
     class Program
     {
         private static void Main(string[] args)
         {
-            var consumer = new Consumer();
-            consumer.Start();
+            new Controller(new Terminal());
         }
     }
 }

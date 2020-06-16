@@ -2,16 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Domain
+namespace Domain.GUI
 {
-    public static class ConsoleInput
+    public class Terminal: IGui
     {
-        public static void ShowLine(string text = "")
+        public void ShowInfo(List<string> information)
         {
-            Console.WriteLine(text);
+            foreach (var info in information)
+            {
+                Console.WriteLine(info);
+            }
         }
 
-        public static int GetInteger(string text, int greaterCondition = int.MaxValue, int lessCondition = 0)
+        public int GetInteger(string text, int greaterCondition = int.MaxValue, int lessCondition = 0)
         {
             string input;
             int result;
@@ -26,7 +29,7 @@ namespace Domain
             return result;
         }
 
-        public static List<string> GetStringArray(string text, char? separator = null)
+        public List<string> GetStringArray(string text, char? separator = null)
         {
             Console.WriteLine(text);
 
@@ -41,11 +44,13 @@ namespace Domain
             }
         }
 
-        public static void WaitKey(string text, ConsoleKey key, Action callback)
+        public void WaitKey(string text, string key, Action callback)
         {
             Console.WriteLine(text);
 
-            while (Console.ReadKey(true).Key != key)
+            var consoleKey = (ConsoleKey)Enum.Parse(typeof(ConsoleKey), key);
+
+            while (Console.ReadKey(true).Key != consoleKey)
             {
             }
 

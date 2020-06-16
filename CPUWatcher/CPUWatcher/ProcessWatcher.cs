@@ -11,8 +11,6 @@ namespace CPUWatcher
 
         private List<ProcessUnit> processes = new List<ProcessUnit>();
 
-        public delegate void CPUWatcherHandler(string message);
-
         public event CPUWatcherHandler ShowCPU;
 
         public ProcessWatcher(Watcher parent, string name, CPUWatcherHandler handler)
@@ -60,7 +58,10 @@ namespace CPUWatcher
 
                     p.UpdateStartTimeAndUsage(endTime, endCpuUsage);
 
-                    ShowCPU?.Invoke($"{p.ProcessId} {appName}: {Math.Round(cpuUsageTotal * 100, 2)}");
+                    ShowCPU?.Invoke(new List<string>
+                    {
+                        $"{p.ProcessId} {appName}: {Math.Round(cpuUsageTotal * 100, 2)}",
+                    });
 
                     tempProcesses.Add(p);
                 }

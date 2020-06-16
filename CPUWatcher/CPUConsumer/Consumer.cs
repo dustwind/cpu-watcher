@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using Domain;
 
 namespace CPUConsumer
 {
@@ -10,31 +9,7 @@ namespace CPUConsumer
     {
         private List<Thread> threads = new List<Thread>();
 
-        public void Start()
-        {
-            SetConsume();
-        }
-
-        private void SetConsume()
-        {
-            var processorCount = Environment.ProcessorCount;
-
-            ConsoleInput.ShowLine("===============");
-            ConsoleInput.ShowLine("Set CPU Consume");
-            ConsoleInput.ShowLine($"Cpu available {processorCount}");
-
-            var cpuCount = ConsoleInput.GetInteger("Enter cpu count: ", processorCount);
-            var cpuUsage = ConsoleInput.GetInteger("Enter cpu usage: ", 100);
-
-            ConsoleInput.ShowLine();
-            ConsoleInput.ShowLine($"Consume {cpuCount} CPU, {cpuUsage}% usage");
-
-            AddCPUConsumer(cpuCount, cpuUsage);
-
-            ConsoleInput.WaitKey("Press <E> to abort CPU consume", ConsoleKey.E, AbortConsume);
-        }
-
-        private void AddCPUConsumer(int cpuCount, int cpuUsage)
+        public void Start(int cpuCount, int cpuUsage)
         {
             for (var i = 0; i < cpuCount; i++)
             {
@@ -44,6 +19,16 @@ namespace CPUConsumer
 
                 threads.Add(t);
             }
+        }
+
+        public void Abort()
+        {
+            foreach (var t in threads)
+            {
+                t.Abort();
+            }
+
+            threads = new List<Thread>();
         }
 
         private void ConsumeCPU(object cpuUsage)
@@ -70,18 +55,6 @@ namespace CPUConsumer
                     watch.Start();
                 }
             }
-        }
-
-        private void AbortConsume()
-        {
-            foreach (var t in threads)
-            {
-                t.Abort();
-            }
-
-            threads = new List<Thread>();
-
-            SetConsume();
         }
     }
 }

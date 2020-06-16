@@ -1,11 +1,12 @@
-﻿namespace CPUWatcher
+﻿using Domain.GUI;
+
+namespace CPUWatcher
 {
     class Program
     {
         private static void Main(string[] args)
         {
-            var watcher = new Watcher();
-            watcher.Start();
+            new Controller(new Terminal());
         }
     }
 }
